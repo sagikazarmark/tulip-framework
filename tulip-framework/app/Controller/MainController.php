@@ -5,9 +5,9 @@ namespace Controller;
 class MainController extends Controller
 {
 
-	public function main()
+	public function index()
 	{
-		
+		$this->loadComposition();
 	}
 
 }

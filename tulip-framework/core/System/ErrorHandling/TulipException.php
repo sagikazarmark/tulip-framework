@@ -60,6 +60,14 @@ class TulipException extends \Exception
  * Thrown when you try to create an instance of a non-existing class.
  */
 \define('EXCODE_CLASS_NOT_EXISTS', 4);
+/**
+ * Thrown when you try to use the automatic controller loading mechanism, and it fails.
+ */
+\define('EXCODE_LOAD_CONTROLLER_FAILURE', 5);
+/**
+ * Thrown when you try to use the automatic controller loading mechanism, and it fails.
+ */
+\define('EXCODE_INDEX_NOT_OVERRIDED', 6);
 
 
 /*
