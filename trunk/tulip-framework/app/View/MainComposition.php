@@ -28,6 +28,7 @@
 			</nav>
 		</header>
 		<div id="content-wrapper">
+			<?php $this->loadView(); ?>
 		</div>
 		<footer>
 		</footer>

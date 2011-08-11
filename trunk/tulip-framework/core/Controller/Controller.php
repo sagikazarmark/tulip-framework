@@ -2,10 +2,12 @@
 
 namespace Controller;
 
-class Controller extends \Object {
+class Controller extends \Object
+{
 
-	public $composition = '';
-	public $view = '';
+	public $compositionName = 'MainComposition';
+	public $viewName = '';
+	public $view = array( );
 
 	public static function loadController( $path = REQUEST_URL )
 	{
@@ -16,7 +18,7 @@ class Controller extends \Object {
 			try {
 				$controllerFullName = 'Controller\\';
 				$controllerFullName .= \implode('\\', \array_slice($parameters, 0, $i - 1));
-				$controllerFullName .= \ucwords($parameters[$i-1]) . 'Controller';
+				$controllerFullName .= str_replace(' ', '', \ucwords(\str_replace('-', ' ', $parameters[$i - 1]))) . 'Controller';
 				\System\AutoLoader::autoLoad($controllerFullName);
 				$controller = new $controllerFullName;
 				break;
@@ -48,23 +50,35 @@ class Controller extends \Object {
 
 	public function loadComposition( $viewName = null, $compositionName = null )
 	{
-		$viewName = $viewName ? $viewName : $this->view;
-		$compositionName = $compositionName ? $compositionName : $this->composition;
-		$this->view = $viewName;
+		$viewName = $viewName ? $viewName : $this->viewName;
+		$compositionName = $compositionName ? $compositionName : $this->compositionName;
+		$this->viewName = $viewName;
 		$this->loadView($compositionName);
 	}
 
 	public function loadView( $viewName = null )
 	{
-		$viewName = $viewName ? $viewName : $this->view;
+		$viewName = $viewName ? $viewName : $this->viewName;
 		$extensions = &\System\Tulip::$viewExtensions;
 		$success = false;
 		$exception = null;
+		foreach ($this->view as $variableName => $variableValue) {
+			$$variableName = $variableValue;
+		}
 		foreach ($extensions as $extension) {
 			try {
-				\System\AutoLoader::load('View' . DS . $viewName . '.' . $extension);
-				$success = true;
-				break;
+				if (\file_exists(APP . DS . 'View' . DS . $viewName . '.' . $extension)) {
+					require(APP . DS . 'View' . DS . $viewName . '.' . $extension);
+					$success = true;
+					break;
+				} elseif (\file_exists(CORE . DS . 'View' . DS . $viewName . '.' . $extension)) {
+					require(CORE . DS . 'View' . DS . $viewName . '.' . $extension);
+					$success = true;
+					break;
+				} else {
+					throw new \System\IO\FileNotFoundException('View' . DS . $viewName . '.' . $extension);
+				}
+//				\System\AutoLoader::load('View' . DS . $viewName . '.' . $extension);
 			} catch (\System\IO\FileNotFoundException $e) {
 				$exception = $e;
 			}
@@ -74,7 +88,7 @@ class Controller extends \Object {
 		}
 	}
 
-	protected function getControllerName()
+	public function getControllerName()
 	{
 		return get_class($this);
 	}
