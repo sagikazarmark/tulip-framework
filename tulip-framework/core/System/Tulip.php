@@ -12,13 +12,13 @@ class Tulip extends \Object
 
 	public static $viewExtensions = array('view.php', 'php', 'phtml', 'html', 'htm');
 
-	public static function init()
+	public static function init($initScript = NULL)
 	{
-		self::initConstants();
+		self::initConstants($initScript);
 		self::setupEnvironment();
 	}
 
-	public static function initConstants()
+	public static function initConstants($initScript = NULL)
 	{
 		/**
 		 * Simple alias for DIRECTORY_SEPARATOR
@@ -36,12 +36,24 @@ class Tulip extends \Object
 		 * <code>/var/www/core</code>
 		 */
 		\define('CORE', ROOT . DS . 'core');
+		if (!is_null($initScript)) {
+			$appName = basename(dirname(dirname($initScript)));
+			if ($appName == 'core') {
+				$appName = 'app';
+			}
+		} else {
+			$appName = "app";
+		}
 		/**
-		 * Path to ROOT . DS . 'app'
+		 * Path to ROOT . DS . '<appfoldername>'
 		 * For example:
 		 * <code>/var/www/app</code>
+		 * <code>/var/www/app2</code>
+		 * From this you can see, that multiple apps can use the same Core. This
+		 * constant always returns the path for the actual web application.
 		 */
-		\define('APP', ROOT . DS . 'app');
+		\define('APP', ROOT . DS . $appName);
+		die(APP);
 	}
 
 	public static function setupEnvironment()
