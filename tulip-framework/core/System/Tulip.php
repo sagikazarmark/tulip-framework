@@ -53,7 +53,6 @@ class Tulip extends \Object
 		 * constant always returns the path for the actual web application.
 		 */
 		\define('APP', ROOT . DS . $appName);
-		die(APP);
 	}
 
 	public static function setupEnvironment()
