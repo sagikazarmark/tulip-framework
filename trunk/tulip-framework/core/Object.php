@@ -43,16 +43,15 @@
  * </code>
  *
  */
-
 class Object
 {
 
-	public function __isset( $name )
+	public function __isset($name)
 	{
 		return (method_exists($this, 'get' . ucwords($name)) || method_exists($this, 'set' . ucwords($name)));
 	}
 
-	public function __get( $name )
+	public function __get($name)
 	{
 		if ($this->__isset($name)) {
 			if (method_exists($this, 'get' . ucwords($name))) {
@@ -64,7 +63,7 @@ class Object
 		}
 	}
 
-	public function __set( $name, $value )
+	public function __set($name, $value)
 	{
 		if ($this->__isset($name)) {
 			if (method_exists($this, 'set' . ucwords($name))) {
@@ -73,6 +72,13 @@ class Object
 			} else {
 				throw new System\ErrorHandling\PropertyOverloadingException("The property \"$name\" is write-only.", EXCODE_PROPERTY_WRITE_ONLY, null, USER_MESSAGE_NOT_DISCUSSED);
 			}
+		}
+	}
+	
+	public function __call($name, $arguments)
+	{
+		if (method_exists($this, lcfirst($name))) {
+			call_user_func_array(array($this, lcfirst($name)), $arguments);
 		}
 	}
 
